@@ -9,6 +9,7 @@ const meetings = require("./data/meetings");
 
 app.use(morgan("dev"));
 app.use(cors());
+app.use(express.json()); // allows us to automatically pass requests
 
 // 1st arg - the path. 2nd arg - a function, what to do when a particular request is received.
 app.get("/", (req, res) => {
@@ -35,6 +36,40 @@ app.get("/contacts/:id/meetings", (req, res) => {
     return meeting.contactId === id;
   });
   res.json({ meetings: filteredMeetings });
+});
+
+app.post("/contacts", (req, res) => {
+  console.log(req.body);
+  const contactData = { ...req.body, id: contacts.length + 1 };
+  contacts.push(contactData);
+  res.json({ contact: contact });
+});
+
+app.delete("/contacts/:id", (req, res) => {
+  const contact = contacts.find((item) => item.id === Number(req.params.id));
+  const index = contacts.indexOf(contact);
+  contacts.splice(index, 1);
+  res.json();
+});
+
+app.put("/contacts/:id", (req, res) => {
+  const contact = contacts.find((item) => item.id === Number(req.params.id));
+  contacts.contacts.map((item) => {
+    if (item.id === contact.id) {
+      return { ...req.body };
+    } else {
+      return item;
+    }
+  });
+  contact.firstName = req.body.firstName;
+  contact.lastName = req.body.id;
+  contact.street = req.body.street;
+  contact.city = req.body.city;
+  contact.type = req.body.type;
+  contact.email = req.body.email;
+  contact.linkedIn = req.body.linkedIn;
+  contact.twitter = req.body.twitter;
+  res.json({ contact: contact });
 });
 
 app.listen(port, () => {
